@@ -1,0 +1,37 @@
+require "rest_client"
+require "json"
+
+ACCESS_TOKEN = "access_token"
+USERNAME = "username"
+SINCE_DATE = "2014-04-10"
+UNTIL_DATE = "2014-04-28"
+LIMIT = "100"
+MESSAGE = "THANKYOU"
+
+
+#response = RestClient.get 'https://graph.facebook.com/username'
+#puts response.code
+#puts response
+#data = JSON.parse(response)
+#puts data
+
+response = RestClient.get "https://graph.facebook.com/#{USERNAME}/feed?access_token=#{ACCESS_TOKEN}&since=#{SINCE_DATE}&until=#{UNTIL_DATE}&limit=#{LIMIT}"
+
+hash = JSON.parse(response)
+
+#puts hash
+
+data = hash["data"]
+data.each do |post|
+
+#puts post
+
+	id = post["id"]
+	if RestClient.post "https://graph.facebook.com/#{id}/likes?access_token=#{ACCESS_TOKEN}", :content_type => :json
+                puts "Liked #{id} dated #{post['created_time']}"
+        end
+end
+        #if RestClient.post "https://graph.facebook.com/#{id}/comments?access_token=#{ACCESS_TOKEN}", :content_type => :xml, :message => MESSAGE 
+	#	puts "Commented #{id} dated #{post['created_time']}"
+	#end
+#end
